@@ -7,6 +7,8 @@ exports.extractNewListing = void 0;
 
 var _puppeteer = _interopRequireDefault(require("puppeteer"));
 
+require("@babel/polyfill");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
