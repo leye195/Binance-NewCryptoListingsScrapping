@@ -6,7 +6,8 @@ export const startSchedule = async (req, res, next) => {
   //let rule = new schedule.RecurrenceRule();
   try {
     job = schedule.scheduleJob("*/5 * * * * *", async () => {
-      const coinList = await extractNewListing();
+      //스케쥴링 활용 실행 반복 사용자 임의 수정 가능
+      const coinList = await extractNewListing("will list"); //원하는 키워드 입력
       [].forEach.call(coinList, async (item) => {
         const notice = await binanceNoticeModel.findOne({ title: item.title });
         if (!notice) {

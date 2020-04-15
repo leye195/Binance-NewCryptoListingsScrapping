@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer";
 const URL =
-  "https://binance.zendesk.com/hc/en-us/sections/115000106672-Avt79SXq?page=1";
+  "https://binance.zendesk.com/hc/en-us/sections/115000106672-Avt79SXq?page=";
 function delay(timeout) {
   return new Promise((resolve) => {
     setTimeout(resolve, timeout);
@@ -20,7 +20,8 @@ const extract_pages = async () => {
         .map((v) => parseInt(v.textContent.trim(), 10))
   );
   const maxPage = Math.max(...pageTags);
-  //console.log(maxPage);
+  //공지사항 마지막 page 숫자
+  //await extractNewListing(page,keyword);
   await page.close();
   await browser.close();
 };
@@ -48,7 +49,7 @@ const extractNoticeDate = async (page, coinList) => {
   }
   return coinListWithDate;
 };
-export const extractNewListing = async () => {
+export const extractNewListing = async (keyword) => {
   const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
   await page.setExtraHTTPHeaders({
@@ -57,7 +58,7 @@ export const extractNewListing = async () => {
   await page.setUserAgent(
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36"
   );
-  await page.goto(URL, { waitUntil: "networkidle2" });
+  await page.goto(`${URL}1`, { waitUntil: "networkidle2" });
   await delay(1000);
   const articles = await page.$$eval(
     "body > main > div.container > div > section > ul > li.article-list-item  > a.article-list-link",
@@ -67,8 +68,8 @@ export const extractNewListing = async () => {
       })
   );
   let coinListing = [];
-  [].forEach.call(articles, (item) => {
-    if (item.title.toLowerCase().includes("will list")) {
+  [].forEach.call(articles, (item, keyword) => {
+    if (item.title.toLowerCase().includes(keyword)) {
       const coinSymbol = item.title.split(/(\([A-Z]+\) )/g); //코인 심볼 추출
       if (coinSymbol.length > 1) {
         const symbol = coinSymbol[1].slice(1, coinSymbol[1].length - 2);
