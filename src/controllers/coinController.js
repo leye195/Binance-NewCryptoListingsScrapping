@@ -7,7 +7,7 @@ export const startSchedule = async (req, res, next) => {
   try {
     //job = schedule.scheduleJob("*/5 * * * * *", async () => {
     //스케쥴링 활용 실행 반복 사용자 임의 수정 가능
-    const coinList = await extractNewListing("will list"); //원하는 키워드 입력
+    /*const coinList = await extractNewListing("will list"); //원하는 키워드 입력
     [].forEach.call(coinList, async (item) => {
       const notice = await binanceNoticeModel.findOne({ title: item.title });
       if (!notice) {
@@ -18,7 +18,7 @@ export const startSchedule = async (req, res, next) => {
           updatedAt: item.updatedAt,
         });
       }
-    });
+    });*/
     console.log("Scraping 진행");
     res.send("Scraping 시작");
     //});
