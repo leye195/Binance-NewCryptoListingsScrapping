@@ -12,15 +12,21 @@ require("./db");
 
 var _globalRoute = _interopRequireDefault(require("./routes/globalRoute"));
 
-require("@babel/polyfill");
+var _dotenv = _interopRequireDefault(require("dotenv"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+_dotenv["default"].config();
 
 var app = (0, _express["default"])();
 app.use((0, _helmet["default"])());
 app.use((0, _cors["default"])());
 app.use((0, _morgan["default"])("dev"));
+app.use(_express["default"].json());
+app.use(_express["default"].urlencoded({
+  extended: true
+}));
 app.use("/", _globalRoute["default"]);
-app.listen(8787, function () {
-  console.log("[Scrapping] Express is Running on Port:8787");
+app.listen(process.env.PORT, function () {
+  console.log("[Scrapping] Express is Running on Port:".concat(process.env.PORT));
 });
