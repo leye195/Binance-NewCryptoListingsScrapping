@@ -24,11 +24,11 @@ export const startSchedule = async (req, res, next) => {
     //});
   } catch (e) {
     console.error(e);
-    job.cancel();
+    //job.cancel();
     next(e);
   }
 };
 export const endSchedule = async (req, res, next) => {
-  job.cancel();
+  //job.cancel();
   res.end();
 };
