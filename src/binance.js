@@ -1,5 +1,4 @@
 import puppeteer from "puppeteer";
-import "@babel/polyfill";
 const URL =
   "https://binance.zendesk.com/hc/en-us/sections/115000106672-Avt79SXq?page=";
 function delay(timeout) {
