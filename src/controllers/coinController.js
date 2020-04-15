@@ -1,7 +1,7 @@
 import schedule from "node-schedule";
 import { extractNewListing } from "../binance";
 import binanceNoticeModel from "../model/binanceNoticeModel";
-//let job = null;
+let job = null;
 export const startSchedule = async (req, res, next) => {
   //let rule = new schedule.RecurrenceRule();
   try {
