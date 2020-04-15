@@ -20,8 +20,8 @@ export const startSchedule = async (req, res, next) => {
         }
       });
       console.log("Scraping 진행");
+      res.end();
     });
-    res.end();
   } catch (e) {
     console.error(e);
     job.cancel();

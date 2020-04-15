@@ -80,15 +80,15 @@ var startSchedule = /*#__PURE__*/function () {
                           };
                         }());
                         console.log("Scraping 진행");
+                        res.end();
 
-                      case 5:
+                      case 6:
                       case "end":
                         return _context2.stop();
                     }
                   }
                 }, _callee2);
               })));
-              res.end();
             } catch (e) {
               console.error(e);
               job.cancel();
