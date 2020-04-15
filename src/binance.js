@@ -51,7 +51,10 @@ const extractNoticeDate = async (page, coinList) => {
   return coinListWithDate;
 };
 export const extractNewListing = async (keyword) => {
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ["--no-sandbox"],
+  });
   const page = await browser.newPage();
   await page.setExtraHTTPHeaders({
     "Accept-Language": "en-US,en;q=0.9",
