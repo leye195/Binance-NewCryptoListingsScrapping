@@ -3,7 +3,7 @@ import { extractNewListing } from "../binance";
 import binanceNoticeModel from "../model/binanceNoticeModel";
 let job = null;
 export const startSchedule = async (req, res, next) => {
-  let rule = new schedule.RecurrenceRule();
+  //let rule = new schedule.RecurrenceRule();
   try {
     job = schedule.scheduleJob("*/5 * * * * *", async () => {
       //스케쥴링 활용 실행 반복 사용자 임의 수정 가능
@@ -24,7 +24,7 @@ export const startSchedule = async (req, res, next) => {
     res.send("Scraping 시작");
   } catch (e) {
     console.error(e);
-    //job.cancel();
+    job.cancel();
     next(e);
   }
 };
