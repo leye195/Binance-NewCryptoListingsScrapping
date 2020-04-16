@@ -5,7 +5,7 @@ let job = null;
 export const startSchedule = async (req, res, next) => {
   //let rule = new schedule.RecurrenceRule();
   try {
-    job = schedule.scheduleJob("*/5 * * * * *", async () => {
+    job = schedule.scheduleJob("*/10 * * * * *", async () => {
       //스케쥴링 활용 실행 반복 사용자 임의 수정 가능
       const coinList = await extractNewListing("will list"); //원하는 키워드 입력
       [].forEach.call(coinList, async (item) => {
@@ -29,6 +29,6 @@ export const startSchedule = async (req, res, next) => {
   }
 };
 export const endSchedule = async (req, res, next) => {
-  //job.cancel();
+  job.cancel();
   res.end();
 };
