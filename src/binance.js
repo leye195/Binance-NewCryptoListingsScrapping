@@ -72,9 +72,8 @@ export const extractNewListing = async () => {
       })
   );
   let coinListing = [];
-  //willList = articles.filter(article=>article.title.includes("Will List"));
   [].forEach.call(articles, (item) => {
-    console.log(item.title, item.title.includes("Will List"));
+    //console.log(item.title, item.title.includes("Will List"));
     if (item.title.includes("Will List")) {
       const coinSymbol = item.title.split(/(\([A-Z]+\))/g); //코인 심볼 추출
       if (coinSymbol.length > 1) {
@@ -83,7 +82,6 @@ export const extractNewListing = async () => {
       }
     }
   });
-  console.log(coinListing);
   coinListing = (await extractNoticeDate(page, coinListing)).sort((x, y) => {
     return x.updatedAt > y.updatedAt ? -1 : 1;
   });
