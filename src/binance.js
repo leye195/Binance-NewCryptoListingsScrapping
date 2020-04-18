@@ -1,7 +1,7 @@
 import puppeteer from "puppeteer";
 import "@babel/polyfill";
 const URL =
-  "https://binance.zendesk.com/hc/en-us/sections/115000106672-Avt79SXq?page=";
+  "https://binance.zendesk.com/hc/en-us/sections/115000106672-Avt79SXq";
 function delay(timeout) {
   return new Promise((resolve) => {
     setTimeout(resolve, timeout);
@@ -50,9 +50,10 @@ const extractNoticeDate = async (page, coinList) => {
   }
   return coinListWithDate;
 };
-export const extractNewListing = async (keyword) => {
+export const extractNewListing = async () => {
   const browser = await puppeteer.launch({
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    headless: true,
+    //args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
   const page = await browser.newPage();
   await page.setExtraHTTPHeaders({
@@ -61,7 +62,7 @@ export const extractNewListing = async (keyword) => {
   await page.setUserAgent(
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36"
   );
-  await page.goto(`${URL}1`, { waitUntil: "networkidle2" });
+  await page.goto(`${URL}`, { waitUntil: "networkidle2" });
   await delay(1000);
   const articles = await page.$$eval(
     "body > main > div.container > div > section > ul > li.article-list-item  > a.article-list-link",
@@ -71,18 +72,22 @@ export const extractNewListing = async (keyword) => {
       })
   );
   let coinListing = [];
-  [].forEach.call(articles, (item, keyword) => {
-    if (item.title.toLowerCase().includes(keyword)) {
-      const coinSymbol = item.title.split(/(\([A-Z]+\) )/g); //코인 심볼 추출
+  //willList = articles.filter(article=>article.title.includes("Will List"));
+  [].forEach.call(articles, (item) => {
+    console.log(item.title, item.title.includes("Will List"));
+    if (item.title.includes("Will List")) {
+      const coinSymbol = item.title.split(/(\([A-Z]+\))/g); //코인 심볼 추출
       if (coinSymbol.length > 1) {
-        const symbol = coinSymbol[1].slice(1, coinSymbol[1].length - 2);
+        const symbol = coinSymbol[1].slice(1, coinSymbol[1].length - 1);
         coinListing.push({ title: item.title, link: item.link, coin: symbol });
       }
     }
   });
+  console.log(coinListing);
   coinListing = (await extractNoticeDate(page, coinListing)).sort((x, y) => {
     return x.updatedAt > y.updatedAt ? -1 : 1;
   });
+  //console.log(coinListing);
   await page.close();
   await browser.close();
   return coinListing;
