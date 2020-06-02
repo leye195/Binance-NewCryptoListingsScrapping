@@ -56,7 +56,7 @@ const extractNoticeDate = async (page, coinList) => {
 export const extractNewListing = async () => {
   puppeteer.use(stealth());
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     defaultViewport: false,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
@@ -76,31 +76,22 @@ export const extractNewListing = async () => {
     "#exchanges_wrap > div.exchanges_body > div > div.post_list > div.inner > table > tbody > tr > td.subject_cell > a.subject",
     (items) =>
       items.map((item) => {
-        const title = item.textContent.trim(),
+        const title = item.textContent.slice(2).trim(),
           link = item.href;
-        if (title.contains("Will List")) {
+        if (title.includes("Will List")) {
           return { title, link, coin: true };
         } else
           return {
-            title: item.textContent.trim(),
-            link: item.href,
+            title,
+            link,
             coin: false,
           };
       })
   );
-  console.log(articles);
-  /*const articles = await page.$$eval(
-    "body > main > div.container > div > section > ul > li.article-sist-item  > a.article-list-link",
-    (items) =>
-      items.map((v) => {
-        return { title: v.textContent.trim(), link: v.href };
-      })
-  );*/
-  /*console.log("article", articles);
+  //console.log(articles);
   let coinListing = [];
   [].forEach.call(articles, (item) => {
-    //console.log(item.title, item.title.includes("Will List"));
-    if (item.title.includes("Will List")) {
+    if (item.coin === true) {
       const coinSymbol = item.title.split(/(\([A-Z]+\))/g); //코인 심볼 추출
       if (coinSymbol.length > 1) {
         const symbol = coinSymbol[1].slice(1, coinSymbol[1].length - 1);
@@ -108,13 +99,9 @@ export const extractNewListing = async () => {
       }
     }
   });
-
-  coinListing = (await extractNoticeDate(page, coinListing)).sort((x, y) => {
-    return x.updatedAt > y.updatedAt ? -1 : 1;
-  });*/
   //console.log(coinListing);
-  //await page.close();
-  //await browser.close();
-  return [];
+  await page.close();
+  await browser.close();
+  return coinListing;
 };
-extractNewListing();
+//extractNewListing();

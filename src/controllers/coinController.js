@@ -8,15 +8,15 @@ export const startSchedule = async (req, res, next) => {
     job = schedule.scheduleJob("*/10 * * * * *", async () => {
       //스케쥴링 활용 실행 반복 사용자 임의 수정 가능
       const coinList = await extractNewListing(); //원하는 키워드 입력
+      console.log(coinList);
       [].forEach.call(coinList, async (item) => {
         const notice = await binanceNoticeModel.findOne({ title: item.title });
         if (!notice) {
-          /*await binanceNoticeModel.create({
+          await binanceNoticeModel.create({
             title: item.title,
             link: item.link,
             coin: item.coin,
-            updatedAt: item.updatedAt,
-          });*/
+          });
         }
       });
       console.log("Scraping 진행");
