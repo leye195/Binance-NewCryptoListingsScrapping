@@ -11,12 +11,12 @@ export const startSchedule = async (req, res, next) => {
       [].forEach.call(coinList, async (item) => {
         const notice = await binanceNoticeModel.findOne({ title: item.title });
         if (!notice) {
-          await binanceNoticeModel.create({
+          /*await binanceNoticeModel.create({
             title: item.title,
             link: item.link,
             coin: item.coin,
             updatedAt: item.updatedAt,
-          });
+          });*/
         }
       });
       console.log("Scraping 진행");

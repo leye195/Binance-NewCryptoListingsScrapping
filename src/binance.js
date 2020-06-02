@@ -1,7 +1,10 @@
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-extra";
+import stealth from "puppeteer-extra-plugin-stealth";
+// add stealth plugin and use defaults (all evasion techniques)
+import randomUser from "random-useragent";
 import "@babel/polyfill";
-const URL =
-  "https://binance.zendesk.com/hc/en-us/sections/115000106672-Avt79SXq";
+const URL = "https://bitmeet.com/ko/exchanges/BINANCE/notice?page=1";
+//"https://binance.zendesk.com/hc/en-us/sections/115000106672-Avt79SXq";
 function delay(timeout) {
   return new Promise((resolve) => {
     setTimeout(resolve, timeout);
@@ -51,25 +54,49 @@ const extractNoticeDate = async (page, coinList) => {
   return coinListWithDate;
 };
 export const extractNewListing = async () => {
+  puppeteer.use(stealth());
   const browser = await puppeteer.launch({
+    headless: false,
+    defaultViewport: false,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
   const page = await browser.newPage();
+  await page.setJavaScriptEnabled(true);
   await page.setExtraHTTPHeaders({
-    "Accept-Language": "en-US,en;q=0.9",
+    "accept-language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
   });
   await page.setUserAgent(
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36"
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36"
   );
+
   await page.goto(`${URL}`, { waitUntil: "networkidle2" });
-  await delay(1000);
+  await delay(5000);
+
   const articles = await page.$$eval(
-    "body > main > div.container > div > section > ul > li.article-list-item  > a.article-list-link",
+    "#exchanges_wrap > div.exchanges_body > div > div.post_list > div.inner > table > tbody > tr > td.subject_cell > a.subject",
+    (items) =>
+      items.map((item) => {
+        const title = item.textContent.trim(),
+          link = item.href;
+        if (title.contains("Will List")) {
+          return { title, link, coin: true };
+        } else
+          return {
+            title: item.textContent.trim(),
+            link: item.href,
+            coin: false,
+          };
+      })
+  );
+  console.log(articles);
+  /*const articles = await page.$$eval(
+    "body > main > div.container > div > section > ul > li.article-sist-item  > a.article-list-link",
     (items) =>
       items.map((v) => {
         return { title: v.textContent.trim(), link: v.href };
       })
-  );
+  );*/
+  /*console.log("article", articles);
   let coinListing = [];
   [].forEach.call(articles, (item) => {
     //console.log(item.title, item.title.includes("Will List"));
@@ -81,11 +108,13 @@ export const extractNewListing = async () => {
       }
     }
   });
+
   coinListing = (await extractNoticeDate(page, coinListing)).sort((x, y) => {
     return x.updatedAt > y.updatedAt ? -1 : 1;
-  });
+  });*/
   //console.log(coinListing);
-  await page.close();
-  await browser.close();
-  return coinListing;
+  //await page.close();
+  //await browser.close();
+  return [];
 };
+extractNewListing();
