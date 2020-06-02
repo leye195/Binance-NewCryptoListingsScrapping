@@ -6,11 +6,11 @@
 
 ### Puppeteer
 
-- Puppeteer는 Headless Chrome 혹은 Chromium을 제어하도록 도와주는 라이브러리로 웹페이지 크롤링, 웹페이지 자동화 테스트 도구
+- Puppeteer는 Headless Chrome 혹은 Chromium을 제어하는 라이브러리로 웹페이지 크롤링, 웹페이지 자동화 테스트 도구
 
 ### node-schedule
 
-- node-schedule를 활용 스케줄러 설정 진행
+- node-schedule를 활용 스케줄러 설정
 
 ```
 *　　　　　　*　　　　　　*　　　　　　*　　　　　　*
