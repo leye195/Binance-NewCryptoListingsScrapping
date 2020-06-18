@@ -1,10 +1,22 @@
-import puppeteer from "puppeteer-extra";
-import stealth from "puppeteer-extra-plugin-stealth";
+import puppeteer from "puppeteer";
 // add stealth plugin and use defaults (all evasion techniques)
-import randomUser from "random-useragent";
 import "@babel/polyfill";
-const URL = "https://bitmeet.com/ko/exchanges/BINANCE/notice?page=1";
-//"https://binance.zendesk.com/hc/en-us/sections/115000106672-Avt79SXq";
+const URL = "https://www.binance.com/en/support/announcement/c-48";
+//"https://bitmeet.com/ko/exchanges/BINANCE/notice?page=1";
+
+const extractSymbol = (title) => {
+  let symbol = "";
+  for (let i = 0; i < title.length; i++) {
+    if (title.charCodeAt(i) >= 65 && title.charCodeAt(i) <= 90) {
+      symbol += title.charAt(i);
+    } else {
+      if (symbol.length > 1) break;
+      symbol = "";
+    }
+  }
+  return symbol;
+};
+
 function delay(timeout) {
   return new Promise((resolve) => {
     setTimeout(resolve, timeout);
@@ -30,78 +42,49 @@ const extract_pages = async () => {
   await browser.close();
 };
 
-const extractNoticeDate = async (page, coinList) => {
-  let idx = 0;
-  const coinListWithDate = [];
-  while (idx < coinList.length) {
-    try {
-      await page.goto(coinList[idx].link, { waitUntil: "networkidle2" });
-      const noticeDate = await page.$eval(
-        "#article-container > article > section.article-info > div > div.article-body > p:nth-last-child(11) > span",
-        (item) => item.textContent
-      );
-      coinListWithDate.push({
-        title: coinList[idx].title,
-        link: coinList[idx].link,
-        coin: coinList[idx].coin,
-        updatedAt: noticeDate,
-      });
-      idx++;
-    } catch (e) {
-      console.error(e);
-    }
-  }
-  return coinListWithDate;
-};
 export const extractNewListing = async () => {
-  puppeteer.use(stealth());
-  const browser = await puppeteer.launch({
-    headless: true,
-    defaultViewport: false,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  });
-  const page = await browser.newPage();
-  await page.setJavaScriptEnabled(true);
-  await page.setExtraHTTPHeaders({
-    "accept-language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
-  });
-  await page.setUserAgent(
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36"
-  );
-
-  await page.goto(`${URL}`, { waitUntil: "networkidle2" });
-  await delay(5000);
-
-  const articles = await page.$$eval(
-    "#exchanges_wrap > div.exchanges_body > div > div.post_list > div.inner > table > tbody > tr > td.subject_cell > a.subject",
-    (items) =>
-      items.map((item) => {
-        const title = item.textContent.slice(2).trim(),
-          link = item.href;
-        if (title.includes("Will List")) {
-          return { title, link, coin: true };
-        } else
-          return {
-            title,
-            link,
-            coin: false,
-          };
-      })
-  );
-  //console.log(articles);
-  let coinListing = [];
-  [].forEach.call(articles, (item) => {
-    if (item.coin === true) {
-      const coinSymbol = item.title.split(/(\([A-Z]+\))/g); //코인 심볼 추출
-      if (coinSymbol.length > 1) {
-        const symbol = coinSymbol[1].slice(1, coinSymbol[1].length - 1);
-        coinListing.push({ title: item.title, link: item.link, coin: symbol });
+  try {
+    console.log("binance checking");
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+    const page = await browser.newPage();
+    await page.setExtraHTTPHeaders({
+      "accept-language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+    });
+    await page.setUserAgent(
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36"
+    );
+    await page.goto(`${URL}`, { waitUntil: "networkidle2" });
+    await page.waitForSelector(
+      "#__APP > div > div > div > div > div.css-deb3qh > div.css-1oz0ry0 > div.css-vurnku"
+    );
+    const listing = await page.$$eval(
+      "#__APP > div > div > div > div > div.css-deb3qh > div.css-1oz0ry0 > div.css-vurnku > div.css-6f91y1 > div > a",
+      (items) => {
+        return items.map((item) => {
+          const title = item.textContent.trim(),
+            link = item.href;
+          if (title.includes("Will List")) {
+            return { title, link, coin: true };
+          } else {
+            return { title, link, coin: false };
+          }
+        });
       }
-    }
-  });
-  //console.log(coinListing);
-  await page.close();
-  await browser.close();
-  return coinListing;
+    );
+    const coinList = [];
+    [].forEach.call(listing, async (item) => {
+      if (item.coin === true) {
+        const symbol = extractSymbol(item.title); //코인 심볼 추출
+        coinList;
+      }
+    });
+    await page.close();
+    await browser.close();
+    return coinListing;
+  } catch (e) {
+    console.log(e);
+  }
 };
-//extractNewListing();
