@@ -1,6 +1,6 @@
 # Binance-NewCryptoListingsScrapping
 
-### 바이낸스 공지사항 (수정 중)
+### 바이낸스 공지사항 스크랩핑
 
 신규 디지털 자산 상장 Scrapping With NodeJS, Puppeteer (키워드: Will Listing 포함 부분 추출)
 

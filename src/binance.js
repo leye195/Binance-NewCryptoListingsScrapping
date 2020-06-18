@@ -78,7 +78,7 @@ export const extractNewListing = async () => {
     [].forEach.call(listing, async (item) => {
       if (item.coin === true) {
         const symbol = extractSymbol(item.title); //코인 심볼 추출
-        coinList;
+        coinList.push({ symbol, title: item.title, link: item.link });
       }
     });
     await page.close();
