@@ -2,11 +2,7 @@
 
 ### 바이낸스 공지사항 스크랩핑
 
-신규 디지털 자산 상장 Scrapping With NodeJS, Puppeteer (키워드: Will Listing 포함 부분 추출)
-
-### Puppeteer
-
-- Puppeteer는 Headless Chrome 혹은 Chromium을 제어하는 라이브러리로 웹페이지 크롤링, 웹페이지 자동화 테스트 도구
+신규 디지털 자산 상장 Scrapping With NodeJS
 
 ### node-schedule
 
